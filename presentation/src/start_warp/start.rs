@@ -9,6 +9,7 @@ use futures::{FutureExt as _, Stream};
 use async_stream::stream;
 use crate::start_warp::homepage::homepage;
 use crate::start_warp::playground::playground;
+use crate::start_warp::schema::grahpql_websocket_header;
 
 #[derive(Clone)]
 struct Context;
@@ -164,10 +165,7 @@ pub async fn start_warp() {
                     .await
             })
         }))
-        .map(|reply| {
-            // TODO#584: remove this workaround
-            warp::reply::with_header(reply, "Sec-WebSocket-Protocol", "graphql-ws")
-        })
+        .map(grahpql_websocket_header)
         .or(warp::post()
             .and(warp::path("graphql"))
             .and(qm_graphql_filter))
