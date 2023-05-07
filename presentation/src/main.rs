@@ -1,6 +1,6 @@
-//! This example demonstrates asynchronous subscriptions with warp and tokio 0.2
+mod setup_log;
 
-use std::{env, pin::Pin, sync::Arc, time::Duration};
+use std::{pin::Pin, sync::Arc, time::Duration};
 
 use futures::{FutureExt as _, Stream};
 use juniper::{
@@ -10,6 +10,7 @@ use juniper::{
 use juniper_graphql_ws::ConnectionConfig;
 use juniper_warp::{playground_filter, subscriptions::serve_graphql_ws};
 use warp::{http::Response, Filter};
+use crate::setup_log::setup_log;
 
 #[derive(Clone)]
 struct Context;
@@ -141,8 +142,7 @@ fn schema() -> Schema {
 
 #[tokio::main]
 async fn main() {
-    env::set_var("RUST_LOG", "warp_subscriptions");
-    env_logger::init();
+    setup_log();
 
     let log = warp::log("warp_subscriptions");
 
