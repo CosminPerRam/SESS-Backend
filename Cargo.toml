@@ -1,6 +1,9 @@
 [workspace]
 members = [
     "presentation",
+    "queries",
+    "subscriptions",
+    "context"
 ]
 
 [workspace.package]

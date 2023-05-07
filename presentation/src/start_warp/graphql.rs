@@ -5,7 +5,8 @@ use warp::{Filter, Reply};
 use warp::reply::WithHeader;
 use warp::ws::Ws;
 use futures::{FutureExt as _};
-use crate::schema::{Context, Schema};
+use context::Context;
+use crate::schema::Schema;
 
 pub fn websocket_protocol_header(reply: impl Reply + Sized) -> WithHeader<impl Reply + Sized + Sized> {
     warp::reply::with_header(reply, "Sec-WebSocket-Protocol", "graphql-ws")
