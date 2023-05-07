@@ -1,8 +1,8 @@
 [workspace]
 members = [
     "presentation",
-    "queries",
     "subscriptions",
+    "queries",
     "context"
 ]
 

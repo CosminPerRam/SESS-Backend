@@ -1,8 +1,8 @@
 
 use juniper::{EmptyMutation, RootNode};
 use context::Context;
-use queries::Subscription;
-use subscriptions::Query;
+use queries::Query;
+use subscriptions::Subscription;
 
 pub type Schema = RootNode<'static, Query, EmptyMutation<Context>, Subscription>;
 

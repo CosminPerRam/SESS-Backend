@@ -7,3 +7,6 @@ edition = "2021"
 context = { path = "../context" }
 
 juniper = "0.15.11"
+async-stream = "0.3.5"
+futures = "0.3.28"
+tokio = { version = "1.28.0", features = ["macros", "rt-multi-thread"]}
