@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use juniper_graphql_ws::ConnectionConfig;
 use juniper_warp::subscriptions::serve_graphql_ws;
-use warp::Reply;
+use warp::{Filter, Reply};
 use warp::reply::WithHeader;
 use warp::ws::Ws;
 use futures::{FutureExt as _};
@@ -25,4 +25,14 @@ pub fn serve_schema(root_node: Arc<Schema>) -> impl Fn(Ws) -> Box<dyn Reply> + C
                 .await
         }))
     }
+}
+
+pub fn endpoint(schema: Schema) -> impl Filter<Extract = impl Reply, Error = warp::Rejection> + Clone {
+    let qm_schema = schema;
+    let qm_state = warp::any().map(|| Context);
+    let qm_graphql_filter = juniper_warp::make_graphql_filter(qm_schema, qm_state.boxed());
+
+    warp::post()
+        .and(warp::path("graphql"))
+        .and(qm_graphql_filter)
 }
