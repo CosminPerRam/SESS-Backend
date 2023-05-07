@@ -3,11 +3,12 @@ use std::sync::Arc;
 use std::time::Duration;
 use juniper::{GraphQLEnum, graphql_object, graphql_subscription, graphql_value, FieldError, EmptyMutation, RootNode};
 use juniper_graphql_ws::ConnectionConfig;
-use juniper_warp::playground_filter;
 use juniper_warp::subscriptions::serve_graphql_ws;
-use warp::{http::Response, Filter};
+use warp::Filter;
 use futures::{FutureExt as _, Stream};
 use async_stream::stream;
+use crate::start_warp::homepage::homepage;
+use crate::start_warp::playground::playground;
 
 #[derive(Clone)]
 struct Context;
@@ -141,12 +142,6 @@ fn schema() -> Schema {
 }
 
 pub async fn start_warp() {
-    let homepage = warp::path::end().map(|| {
-        Response::builder()
-            .header("content-type", "text/html")
-            .body("<html><h1>juniper_subscriptions demo</h1><div>visit <a href=\"/playground\">graphql playground</a></html>")
-    });
-
     let qm_schema = schema();
     let qm_state = warp::any().map(|| Context);
     let qm_graphql_filter = juniper_warp::make_graphql_filter(qm_schema, qm_state.boxed());
@@ -176,10 +171,8 @@ pub async fn start_warp() {
         .or(warp::post()
             .and(warp::path("graphql"))
             .and(qm_graphql_filter))
-        .or(warp::get()
-            .and(warp::path("playground"))
-            .and(playground_filter("/graphql", Some("/subscriptions"))))
-        .or(homepage)
+        .or(playground())
+        .or(homepage())
         .with(log);
 
     warp::serve(routes).run(([127, 0, 0, 1], 8080)).await;
