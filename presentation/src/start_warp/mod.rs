@@ -1,6 +1,6 @@
 pub mod start;
 mod homepage;
 mod playground;
-mod schema;
+mod graphql;
 
 pub use start::*;
