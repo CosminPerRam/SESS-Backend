@@ -1,10 +1,13 @@
+mod filters;
+
 use std::pin::Pin;
 use juniper::{graphql_object, graphql_subscription, FieldError};
 use futures::Stream;
 use async_stream::stream;
 use context::Context;
-use gamedig::valve_master_server::{query_singular, Region, SearchFilters, Filter};
+use gamedig::valve_master_server::{query_singular, Region};
 use gamedig::protocols::valve::{Engine, query, GatheringSettings};
+use crate::filters::{ServersFilters, to_gamedig_filters};
 
 struct Server {
     name: String
@@ -24,39 +27,29 @@ pub struct Subscription;
 
 #[graphql_subscription(context = Context)]
 impl Subscription {
-    async fn servers() -> ServersStream {
+    async fn servers(filters: Option<ServersFilters>, nor_filters: Option<ServersFilters>, nand_filters: Option<ServersFilters>) -> ServersStream {
         let stream = stream! {
             let gather_settings = GatheringSettings {
-                    players: false,
-                    rules: false
-                };
+                players: false,
+                rules: false
+            };
 
-            loop {
-                // see warp_subscriptions example from juniper
+            let search_filters = to_gamedig_filters(filters, nor_filters, nand_filters);
 
-                let search_filters = SearchFilters::new()
-                    .insert(Filter::RunsAppID(440))
-                    .insert(Filter::CanBeEmpty(false))
-                    .insert(Filter::CanBeFull(false))
-                    .insert(Filter::CanHavePassword(false))
-                    .insert(Filter::IsSecured(true))
-                    .insert(Filter::HasTags(&["minecraft"]));
+            let servers_listings = query_singular(Region::Europe, Some(search_filters)).unwrap();
 
-                let responses = query_singular(Region::Europe, Some(search_filters)).unwrap();
+            for listing in servers_listings {
+                let ip = listing.0.to_string();
+                let port = listing.1;
+                println!("{ip}:{port}");
 
-                for server in responses {
-                    let ip = server.0.to_string();
-                    let port = server.1;
-                    println!("{ip}:{port}");
+                let server_response = query(&ip, port, Engine::Source(None), Some(gather_settings), None);
 
-                    let response = query(&ip, port, Engine::Source(None), Some(gather_settings), None).unwrap();
-
+                if let Ok(server) = server_response {
                     yield Ok(Server {
-                        name: response.info.name
+                        name: server.info.name
                     })
                 }
-
-                return
             }
         };
 
