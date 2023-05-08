@@ -1,5 +1,6 @@
 mod filters;
 mod server;
+mod player;
 
 use std::pin::Pin;
 use juniper::{graphql_subscription, FieldError};
@@ -21,7 +22,7 @@ impl Subscription {
     async fn servers(filters: Option<ServersFilters>, nor_filters: Option<ServersFilters>, nand_filters: Option<ServersFilters>) -> ServersStream {
         let stream = stream! {
             let gather_settings = GatheringSettings {
-                players: false,
+                players: true,
                 rules: false
             };
 
