@@ -26,6 +26,11 @@ pub struct Subscription;
 impl Subscription {
     async fn servers() -> ServersStream {
         let stream = stream! {
+            let gather_settings = GatheringSettings {
+                    players: false,
+                    rules: false
+                };
+
             loop {
                 // see warp_subscriptions example from juniper
 
@@ -43,10 +48,6 @@ impl Subscription {
                     let ip = server.0.to_string();
                     let port = server.1;
                     println!("{ip}:{port}");
-                    let gather_settings = GatheringSettings {
-                        players: false,
-                        rules: false
-                    };
 
                     let response = query(&ip, port, Engine::Source(None), Some(gather_settings), None).unwrap();
 
