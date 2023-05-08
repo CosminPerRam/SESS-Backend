@@ -1,23 +1,11 @@
 use gamedig::protocols::valve::Response;
-use juniper::graphql_object;
-use context::Context;
+use juniper::GraphQLObject;
 use crate::player::Player;
 
+#[derive(GraphQLObject)]
 pub struct Server {
     name: String,
     players: Vec<Player>
-}
-
-// Field resolvers implementation
-#[graphql_object(context = Context)]
-impl Server {
-    fn name(&self) -> &str {
-        &self.name
-    }
-
-    fn players(&self) -> &Vec<Player> {
-        &self.players
-    }
 }
 
 impl Server {
