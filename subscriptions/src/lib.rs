@@ -13,27 +13,26 @@ use gamedig::protocols::valve::{Engine, query, GatheringSettings};
 use crate::filters::{ServersFilters, to_gamedig_filters};
 use crate::server::Server;
 
-type ServersStream = Pin<Box<dyn Stream<Item = Result<Server, FieldError>> + Send>>;
-
 pub struct Subscription;
+
+type ServersStream = Pin<Box<dyn Stream<Item = Result<Server, FieldError>> + Send>>;
 
 #[graphql_subscription(context = Context)]
 impl Subscription {
     async fn servers(filters: Option<ServersFilters>, nor_filters: Option<ServersFilters>, nand_filters: Option<ServersFilters>) -> ServersStream {
+        let gather_settings = GatheringSettings {
+            players: true,
+            rules: false
+        };
+
+        let search_filters = to_gamedig_filters(filters, nor_filters, nand_filters);
+
         let stream = stream! {
-            let gather_settings = GatheringSettings {
-                players: true,
-                rules: false
-            };
-
-            let search_filters = to_gamedig_filters(filters, nor_filters, nand_filters);
-
             let servers_listings = query_singular(Region::Europe, Some(search_filters)).unwrap();
 
             for listing in servers_listings {
                 let ip = listing.0.to_string();
                 let port = listing.1;
-                println!("{ip}:{port}");
 
                 let server_response = query(&ip, port, Engine::Source(None), Some(gather_settings), None);
 
