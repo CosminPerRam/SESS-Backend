@@ -3,18 +3,9 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 use statistics::Statistics;
 
-static DATA: Lazy<DatabaseContext> = Lazy::new(|| {
-    let stats = Statistics {
-        queries: 0
-    };
+static DATA: Lazy<DatabaseContext> = Lazy::new(|| DatabaseContext(Arc::new(RwLock::new(Database::default()))));
 
-    let database = Database {
-        statistics: stats
-    };
-
-    DatabaseContext(Arc::new(RwLock::new(database)))
-});
-
+#[derive(Default)]
 pub struct Database {
     pub statistics: Statistics
 }

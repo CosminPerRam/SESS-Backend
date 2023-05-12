@@ -19,7 +19,14 @@ type ServersStream = Pin<Box<dyn Stream<Item = Result<Server, FieldError>> + Sen
 
 #[graphql_subscription(context = DatabaseContext)]
 impl Subscription {
-    async fn servers(filters: Option<ServersFilters>, nor_filters: Option<ServersFilters>, nand_filters: Option<ServersFilters>) -> ServersStream {
+    async fn servers(&self, context: &DatabaseContext,
+                     filters: Option<ServersFilters>,
+                     nor_filters: Option<ServersFilters>,
+                     nand_filters: Option<ServersFilters>) -> ServersStream {
+        let DatabaseContext(context) = context;
+        let mut context = context.write().await;
+        context.statistics.add_servers_query_visit();
+
         let gather_settings = GatheringSettings {
             players: true,
             rules: false

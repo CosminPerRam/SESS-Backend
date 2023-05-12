@@ -10,9 +10,8 @@ pub struct Query;
 impl Query {
     pub async fn statistics(&self, context: &DatabaseContext) -> Statistics {
         let DatabaseContext(context) = context;
-
         let mut context = context.write().await;
-        context.statistics.queries = context.statistics.queries + 1;
+        context.statistics.add_statistics_query_visit();
 
         Statistics::from_db(&context.statistics)
     }
