@@ -5,7 +5,7 @@ use warp::{Filter, Reply};
 use warp::reply::WithHeader;
 use warp::ws::Ws;
 use futures::{FutureExt as _};
-use context::{DatabaseContext, get_context};
+use context::get_context;
 use crate::schema::Schema;
 
 pub fn websocket_protocol_header(reply: impl Reply + Sized) -> WithHeader<impl Reply + Sized + Sized> {

@@ -15,15 +15,15 @@ static DATA: Lazy<DatabaseContext> = Lazy::new(|| {
     DatabaseContext(Arc::new(RwLock::new(database)))
 });
 
-#[derive(Clone)]
 pub struct Database {
     pub statistics: Statistics
 }
 
+#[derive(Clone)]
 pub struct DatabaseContext(pub Arc<RwLock<Database>>);
 
 pub fn get_context() -> DatabaseContext {
-    DatabaseContext(DATA.0.clone())
+    DATA.clone()
 }
 
 impl juniper::Context for DatabaseContext {}
