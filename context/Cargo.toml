@@ -5,3 +5,5 @@ edition = "2021"
 
 [dependencies]
 juniper = "0.15.11"
+tokio = { version="1.28.0", features=["sync"]}
+statistics = { path = "../statistics" }

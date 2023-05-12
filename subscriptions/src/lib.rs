@@ -6,7 +6,7 @@ use std::pin::Pin;
 use juniper::{graphql_subscription, FieldError};
 use futures::Stream;
 use async_stream::stream;
-use context::Context;
+use context::DatabaseContext;
 use gamedig::valve_master_server::{query_singular, Region};
 use gamedig::protocols::valve::{Engine, query, GatheringSettings};
 
@@ -17,7 +17,7 @@ pub struct Subscription;
 
 type ServersStream = Pin<Box<dyn Stream<Item = Result<Server, FieldError>> + Send>>;
 
-#[graphql_subscription(context = Context)]
+#[graphql_subscription(context = DatabaseContext)]
 impl Subscription {
     async fn servers(filters: Option<ServersFilters>, nor_filters: Option<ServersFilters>, nand_filters: Option<ServersFilters>) -> ServersStream {
         let gather_settings = GatheringSettings {

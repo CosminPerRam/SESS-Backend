@@ -5,5 +5,6 @@ edition = "2021"
 
 [dependencies]
 context = { path = "../context" }
+statistics = { path = "../statistics" }
 
 juniper = "0.15.11"

@@ -3,7 +3,8 @@ members = [
     "presentation",
     "subscriptions",
     "queries",
-    "context"
+    "context",
+    "statistics"
 ]
 
 [workspace.package]

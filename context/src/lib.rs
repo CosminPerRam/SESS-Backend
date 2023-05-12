@@ -1,5 +1,23 @@
+use tokio::sync::RwLock;
+use statistics::Statistics;
 
 #[derive(Clone)]
-pub struct Context;
+pub struct Database {
+    pub statistics: Statistics
+}
 
-impl juniper::Context for Context {}
+pub struct DatabaseContext(pub RwLock<Database>);
+
+pub fn get_context() -> DatabaseContext {
+    let stats = Statistics {
+        queries: 0
+    };
+
+    let database = Database {
+        statistics: stats
+    };
+
+    DatabaseContext(RwLock::new(database))
+}
+
+impl juniper::Context for DatabaseContext {}
