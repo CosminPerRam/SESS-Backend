@@ -1,7 +1,7 @@
 use warp::Filter;
 use warp::http::Response;
 
-pub fn homepage() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone
+pub fn homepage() -> impl Filter<Extract = (Result<Response<&'static str>, warp::http::Error>,), Error = warp::Rejection> + Clone
 {
     warp::path::end().map(|| {
         Response::builder()

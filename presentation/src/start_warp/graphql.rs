@@ -5,6 +5,7 @@ use warp::{Filter, Reply};
 use warp::reply::WithHeader;
 use warp::ws::Ws;
 use futures::{FutureExt as _};
+use warp::http::Response;
 use context::get_context;
 use crate::schema::Schema;
 
@@ -28,7 +29,7 @@ pub fn serve_schema(root_node: Arc<Schema>) -> impl Fn(Ws) -> Box<dyn Reply> + C
     }
 }
 
-pub fn endpoint(schema: Schema) -> impl Filter<Extract = impl Reply, Error = warp::Rejection> + Clone {
+pub fn endpoint(schema: Schema) -> impl Filter<Extract = (Response<Vec<u8>>,), Error = warp::Rejection> + Clone {
     let qm_schema = schema;
     let qm_state = warp::any().map(get_context);
     let qm_graphql_filter = juniper_warp::make_graphql_filter(qm_schema, qm_state.boxed());
