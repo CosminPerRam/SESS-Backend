@@ -3,7 +3,7 @@ use juniper::GraphQLInputObject;
 
 #[derive(GraphQLInputObject, Debug)]
 pub struct ServersFilters {
-    secured: Option<bool>,
+    is_secured: Option<bool>,
     runs_map: Option<String>,
     can_have_password: Option<bool>,
     can_be_empty: Option<bool>,
@@ -27,7 +27,7 @@ impl ServersFilters {
     pub fn to_gamedig_filters(self) -> Vec<Filter> {
         let mut filters = Vec::new();
 
-        if let Some(is_secured) = self.secured {
+        if let Some(is_secured) = self.is_secured {
             filters.push(Filter::IsSecured(is_secured))
         }
         if let Some(runs_map) = self.runs_map {
