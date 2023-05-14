@@ -7,10 +7,10 @@ pub struct Statistics {
 
 impl Statistics {
     pub fn add_statistics_query_visit(&mut self) {
-        self.statistics_queries = self.statistics_queries + 1;
+        self.statistics_queries += 1;
     }
 
     pub fn add_servers_query_visit(&mut self) {
-        self.servers_queries = self.servers_queries + 1;
+        self.servers_queries += 1;
     }
 }

@@ -39,9 +39,9 @@ impl Server {
             has_password: response.info.has_password,
             vac_secured: response.info.vac_secured,
             version: response.info.version,
-            players: response.players.unwrap_or(Vec::new())
+            players: response.players.unwrap_or_default()
                 .into_iter()
-                .map(|p| Player::from_valve_response(p))
+                .map(Player::from_valve_response)
                 .collect(),
             is_mod: response.info.is_mod,
         }

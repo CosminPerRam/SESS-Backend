@@ -20,6 +20,6 @@ pub async fn start_warp() {
         .or(homepage())
         .with(log);
 
-    let server_port: u16 = env::var("PORT").unwrap_or("8080".to_string()).parse().unwrap_or(8080);
+    let server_port: u16 = env::var("PORT").unwrap_or_else(|_| "8080".to_string()).parse().unwrap_or(8080);
     warp::serve(routes).run(([0, 0, 0, 0], server_port)).await;
 }
