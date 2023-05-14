@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  web:
+    environment:
+      - PORT=${PORT}
+    network_mode: "bridge"
+    build: .
+    shm_size: '1gb'
+    ports:
+      - "${PORT}:${PORT}"

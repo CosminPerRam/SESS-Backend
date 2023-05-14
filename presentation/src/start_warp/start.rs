@@ -1,3 +1,4 @@
+use std::env;
 use std::sync::Arc;
 use warp::Filter;
 use crate::schema::schema;
@@ -19,5 +20,8 @@ pub async fn start_warp() {
         .or(homepage())
         .with(log);
 
-    warp::serve(routes).run(([127, 0, 0, 1], 8080)).await;
+    let server_port: u16 = env::var("PORT").unwrap_or("8080".to_string()).parse().unwrap_or(8080);
+
+    log::info!("Server started on port ${server_port}");
+    warp::serve(routes).run(([0, 0, 0, 0], server_port)).await;
 }
