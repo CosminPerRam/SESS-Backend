@@ -35,6 +35,11 @@ impl DatabaseContext {
         let mut context = self.acquire_write_context().await;
         context.statistics.statistics_queries += 1;
     }
+
+    pub async fn add_processed_servers(&self, n: u32) {
+        let mut context = self.acquire_write_context().await;
+        context.statistics.servers_processed += n;
+    }
 }
 
 pub fn get_context() -> DatabaseContext {

@@ -32,9 +32,10 @@ impl Subscription {
 
         let search_filters = to_gamedig_filters(filters, nor_filters, nand_filters);
 
-        let stream = stream! {
-            let servers_listings = query_singular(Region::Europe, Some(search_filters)).unwrap();
+        let servers_listings = query_singular(Region::Europe, Some(search_filters)).unwrap();
 
+        context.add_processed_servers(servers_listings.len() as u32).await;
+        let stream = stream! {
             for listing in servers_listings {
                 let ip = listing.0.to_string();
                 let port = listing.1;
