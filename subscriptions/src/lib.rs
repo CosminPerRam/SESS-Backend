@@ -23,9 +23,7 @@ impl Subscription {
                      filters: Option<ServersFilters>,
                      nor_filters: Option<ServersFilters>,
                      nand_filters: Option<ServersFilters>) -> ServersStream {
-        let DatabaseContext(context) = context;  //this is shit, create methods which inside
-        let mut context = context.write().await; //aquire the lock and makes the mutations
-        context.statistics.add_servers_query_visit();
+        context.add_server_query_visit().await;
 
         let gather_settings = GatheringSettings {
             players: true,
