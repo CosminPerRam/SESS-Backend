@@ -17,6 +17,11 @@ pub struct Subscription;
 
 type ServersStream = Pin<Box<dyn Stream<Item = Result<Server, FieldError>> + Send>>;
 
+const GATHER_SETTINGS: GatheringSettings = GatheringSettings {
+    players: true,
+    rules: false
+};
+
 #[graphql_subscription(context = DatabaseContext)]
 impl Subscription {
     async fn servers(&self, context: &DatabaseContext,
@@ -25,22 +30,16 @@ impl Subscription {
                      nand_filters: Option<ServersFilters>) -> ServersStream {
         context.add_server_query_visit().await;
 
-        let gather_settings = GatheringSettings {
-            players: true,
-            rules: false
-        };
-
         let search_filters = to_gamedig_filters(filters, nor_filters, nand_filters);
-
         let servers_listings = query_singular(Region::Europe, Some(search_filters)).unwrap();
-
         context.add_processed_servers(servers_listings.len() as u32).await;
+
         let stream = stream! {
             for listing in servers_listings {
                 let ip = listing.0.to_string();
                 let port = listing.1;
 
-                let server_response = query(&ip, port, Engine::Source(None), Some(gather_settings), None);
+                let server_response = query(&ip, port, Engine::Source(None), Some(GATHER_SETTINGS), None);
 
                 if let Ok(response) = server_response {
                     yield Ok(Server::from_valve_response(response))
