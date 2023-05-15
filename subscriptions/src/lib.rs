@@ -22,29 +22,55 @@ const GATHER_SETTINGS: GatheringSettings = GatheringSettings {
     rules: false
 };
 
+const DEFAULT_LIMIT_AMOUNT: i32 = 48;
+const fn get_limit_amount(limit: Option<i32>) -> i32 {
+    match limit {
+        Some(v) => {
+            if v < 0 {
+                DEFAULT_LIMIT_AMOUNT
+            }
+            else {
+                v
+            }
+        },
+        None => DEFAULT_LIMIT_AMOUNT
+    }
+}
+
 #[graphql_subscription(context = DatabaseContext)]
 impl Subscription {
     async fn servers(&self, context: &DatabaseContext,
-                     filters: Option<ServersFilters>,
-                     nor_filters: Option<ServersFilters>,
-                     nand_filters: Option<ServersFilters>) -> ServersStream {
+                         filters: Option<ServersFilters>,
+                         nor_filters: Option<ServersFilters>,
+                         nand_filters: Option<ServersFilters>,
+                         limit: Option<i32>) -> ServersStream {
+        let limit = get_limit_amount(limit);
+        let mut collected = 0;
+
         context.add_server_query_visit().await;
 
         let search_filters = to_gamedig_filters(filters, nor_filters, nand_filters);
         let servers_listings = query_singular(Region::Europe, Some(search_filters)).unwrap();
-        context.add_processed_servers(servers_listings.len() as u32).await;
 
         let stream = stream! {
             for listing in servers_listings {
+                if collected == limit {
+                    break;
+                }
+
                 let ip = listing.0.to_string();
                 let port = listing.1;
 
                 let server_response = query(&ip, port, Engine::Source(None), Some(GATHER_SETTINGS), None);
 
                 if let Ok(response) = server_response {
+                    collected += 1;
                     yield Ok(Server::from_valve_response(response))
                 }
             }
+
+            //context.add_processed_servers(collected as u32).await;
+            //fucking problem
         };
 
         Box::pin(stream)
