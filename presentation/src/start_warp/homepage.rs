@@ -6,6 +6,6 @@ pub fn homepage() -> impl Filter<Extract = (Result<Response<&'static str>, warp:
     warp::path::end().map(|| {
         Response::builder()
             .header("content-type", "text/html")
-            .body("<html><h1>juniper_subscriptions demo</h1><div>visit <a href=\"/playground\">graphql playground</a></html>")
+            .body("<html><h1>juniper_subscriptions demo</h1><div>visit <a href=\"/playground\">graphql playground</a></html> or <a href=\"/graphiql\">graphiql</a></html>")
     })
 }

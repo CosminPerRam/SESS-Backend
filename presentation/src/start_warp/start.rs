@@ -2,6 +2,7 @@ use std::env;
 use std::sync::Arc;
 use warp::Filter;
 use crate::schema::schema;
+use crate::start_warp::graphiql::graphiql;
 use crate::start_warp::graphql::{endpoint, serve_schema, websocket_protocol_header};
 use crate::start_warp::homepage::homepage;
 use crate::start_warp::playground::playground;
@@ -17,6 +18,7 @@ pub async fn start_warp() {
         .map(websocket_protocol_header)
         .or(endpoint(schema()))
         .or(playground())
+        .or(graphiql())
         .or(homepage())
         .with(log);
 
