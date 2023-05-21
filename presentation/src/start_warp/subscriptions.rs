@@ -6,7 +6,7 @@ use warp::reply::WithHeader;
 use warp::ws::Ws;
 use futures::{FutureExt as _};
 use context::get_context;
-use crate::schema::Schema;
+use crate::schema::{Schema, schema};
 
 pub fn serve_schema(root_node: Arc<Schema>) -> impl Fn(Ws) -> Box<dyn Reply> + Clone
 {
@@ -28,9 +28,14 @@ pub fn websocket_protocol_header(reply: impl Reply + Sized) -> WithHeader<impl R
     warp::reply::with_header(reply, "Sec-WebSocket-Protocol", "graphql-ws")
 }
 
-pub fn subscriptions(root_node: Arc<Schema>) -> impl Filter + Filter<Extract = (WithHeader<impl Reply>,), Error = Rejection> + Clone {
+pub fn subscriptions() -> impl Filter + Filter<Extract = (impl Reply,), Error = Rejection> + Clone {
+    let log = warp::log("warp_subscriptions");
+
+    let root_node = Arc::new(schema());
+
     warp::path("subscriptions")
         .and(warp::ws())
         .map(serve_schema(root_node))
         .map(websocket_protocol_header)
+        .with(log)
 }
