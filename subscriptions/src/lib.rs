@@ -2,6 +2,7 @@ mod filters;
 mod server;
 mod player;
 
+use std::net::SocketAddr;
 use std::pin::Pin;
 use juniper::{graphql_subscription, FieldError};
 use futures::Stream;
@@ -58,10 +59,10 @@ impl Subscription {
                     break;
                 }
 
-                let ip = listing.0.to_string();
+                let ip = listing.0;
                 let port = listing.1;
 
-                let server_response = query(&ip, port, Engine::Source(None), Some(GATHER_SETTINGS), None);
+                let server_response = query(&SocketAddr::new(ip, port), Engine::Source(None), Some(GATHER_SETTINGS), None);
 
                 if let Ok(response) = server_response {
                     collected += 1;
