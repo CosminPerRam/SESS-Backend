@@ -1,6 +1,23 @@
-use gamedig::protocols::valve::Response;
-use juniper::GraphQLObject;
+use gamedig::protocols::valve::{Response, Server as ValveServerKind};
+use juniper::{GraphQLEnum, GraphQLObject};
 use crate::player::Player;
+
+#[derive(GraphQLEnum)]
+pub enum ServerKind {
+    Dedicated,
+    NonDedicated,
+    TV
+}
+
+impl ServerKind {
+    fn from_valve_response(kind: ValveServerKind) -> Self {
+        match kind {
+            ValveServerKind::Dedicated => ServerKind::Dedicated,
+            ValveServerKind::NonDedicated => ServerKind::NonDedicated,
+            ValveServerKind::TV => ServerKind::TV
+        }
+    }
+}
 
 #[derive(GraphQLObject)]
 pub struct Server {
@@ -13,7 +30,7 @@ pub struct Server {
     players_online: i32,
     players_maximum: i32,
     players_bots: i32,
-    //server_type: Server,
+    server_type: ServerKind,
     //environment_type: Environment,
     has_password: bool,
     vac_secured: bool,
@@ -36,6 +53,7 @@ impl Server {
             players_online: response.info.players_online as i32,
             players_maximum: response.info.players_maximum as i32,
             players_bots: response.info.players_bots as i32,
+            server_type: ServerKind::from_valve_response(response.info.server_type),
             has_password: response.info.has_password,
             vac_secured: response.info.vac_secured,
             version: response.info.version,
