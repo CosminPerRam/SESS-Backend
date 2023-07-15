@@ -9,7 +9,5 @@ use crate::start_warp::start_warp;
 async fn main() {
     setup_log();
 
-    log::info!("Listening on 127.0.0.1:8080");
-
     start_warp().await;
 }
