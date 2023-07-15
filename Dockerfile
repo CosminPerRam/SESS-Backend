@@ -24,4 +24,5 @@ COPY --from=builder /usr/src/privkey.pem /usr/local/bin
 COPY --from=builder /usr/src/cert.pem /usr/local/bin
 
 # Run the application
-CMD ["/usr/local/bin/sess_backend"]
+WORKDIR "/usr/local/bin"
+CMD ["sess_backend"]
