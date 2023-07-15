@@ -27,7 +27,7 @@ pub async fn start_warp() {
 
     warp::serve(routes)
         .tls()
-        .cert_path(env::var("CERT_PATH").unwrap_or_else(|_| "fullchain.pem".to_string()))
+        .cert_path(env::var("CERT_PATH").unwrap_or_else(|_| "cert.pem".to_string()))
         .key_path(env::var("KEY_PATH").unwrap_or_else(|_| "privkey.pem".to_string()))
         .run(([0, 0, 0, 0], server_port)).await;
 }
