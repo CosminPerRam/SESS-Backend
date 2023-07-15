@@ -16,8 +16,12 @@ RUN cargo build --target x86_64-unknown-linux-musl --release
 ##### Runtime
 FROM alpine:3.18.0 AS runtime
 
+CMD ["mkdir", "/usr/local/bin/sess"]
+
 # Copy application binary from builder image
-COPY --from=builder /usr/src/target/x86_64-unknown-linux-musl/release/sess_backend /usr/local/bin
+COPY --from=builder /usr/src/target/x86_64-unknown-linux-musl/release/sess_backend /usr/local/bin/sess
+COPY --from=builder /usr/src/privkey.pem /usr/local/bin/sess
+COPY --from=builder /usr/src/fullchain.pem /usr/local/bin/sess
 
 # Run the application
-CMD ["/usr/local/bin/sess_backend"]
+CMD ["/usr/local/bin/sess/sess_backend"]

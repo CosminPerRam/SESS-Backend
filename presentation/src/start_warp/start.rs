@@ -20,6 +20,14 @@ pub async fn start_warp() {
         .or(graphiql())
         .with(cors);
 
-    let server_port: u16 = env::var("PORT").unwrap_or_else(|_| "8080".to_string()).parse().unwrap_or(8080);
-    warp::serve(routes).run(([0, 0, 0, 0], server_port)).await;
+    let server_port: u16 = env::var("PORT")
+        .unwrap_or_else(|_| "8080".to_string())
+        .parse()
+        .unwrap_or(8080);
+
+    warp::serve(routes)
+        .tls()
+        .cert_path(env::var("CERT_PATH").unwrap_or_else(|_| "fullchain.pem".to_string()))
+        .key_path(env::var("KEY_PATH").unwrap_or_else(|_| "privkey.pem".to_string()))
+        .run(([0, 0, 0, 0], server_port)).await;
 }
