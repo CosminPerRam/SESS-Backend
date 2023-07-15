@@ -3,6 +3,9 @@ services:
   web:
     environment:
       - PORT=${PORT}
+      - RUST_LOG=${RUST_LOG}
+      - KEY_PATH=${KEY_PATH}
+      - CERT_PATH=${CERT_PATH}
     network_mode: "bridge"
     build: .
     shm_size: '1gb'
