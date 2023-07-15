@@ -20,7 +20,8 @@ FROM alpine:3.18.0 AS runtime
 
 # Copy application binary from builder image
 COPY --from=builder /usr/src/target/x86_64-unknown-linux-musl/release/sess_backend /usr/local/bin
-COPY --from=builder /usr/src/*.pem /usr/local/bin
+COPY --from=builder /usr/src/privkey.pem /usr/local/bin
+COPY --from=builder /usr/src/cert.pem /usr/local/bin
 
 # Run the application
 CMD ["/usr/local/bin/sess_backend"]
