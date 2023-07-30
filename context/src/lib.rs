@@ -1,13 +1,25 @@
+pub mod db;
+
 use once_cell::sync::Lazy;
 use std::sync::Arc;
+use sea_orm::{DatabaseConnection, EntityTrait};
 use tokio::sync::{RwLock, RwLockWriteGuard, RwLockReadGuard};
-use statistics::Statistics;
+use migration::entities::prelude::Query;
+use sea_orm::prelude::*;
+use crate::db::make_db_connection;
 
 static DATA: Lazy<DatabaseContext> = Lazy::new(|| DatabaseContext(Arc::new(RwLock::new(Database::default()))));
 
-#[derive(Default)]
 pub struct Database {
-    pub statistics: Statistics
+    pub connection: DatabaseConnection
+}
+
+impl Default for Database {
+    fn default() -> Self {
+        Database {
+            connection: make_db_connection()
+        }
+    }
 }
 
 #[derive(Clone)]
@@ -22,23 +34,15 @@ impl DatabaseContext {
         self.0.read().await
     }
 
-    pub async fn get_statistics(&self) -> Statistics {
-        self.acquire_read_context().await.statistics.clone()
+    pub async fn add_query_made(&self) {
+        let context = self.acquire_write_context().await;
+        println!("{}", context.connection.ping().await.is_ok());
     }
 
-    pub async fn add_server_query_visit(&self) {
+    pub async fn get_queries_made(&self) -> u64 {
         let mut context = self.acquire_write_context().await;
-        context.statistics.servers_queries += 1;
-    }
 
-    pub async fn add_statistics_query_visit(&self) {
-        let mut context = self.acquire_write_context().await;
-        context.statistics.statistics_queries += 1;
-    }
-
-    pub async fn add_processed_servers(&self, n: u32) {
-        let mut context = self.acquire_write_context().await;
-        context.statistics.servers_processed += n;
+        Query::find().count(&context.connection).await.unwrap()
     }
 }
 

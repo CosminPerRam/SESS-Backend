@@ -48,7 +48,7 @@ impl Subscription {
         let limit = get_limit_amount(limit);
         let mut collected = 0;
 
-        context.add_server_query_visit().await;
+        context.add_query_made().await;
 
         let search_filters = to_gamedig_filters(filters, nor_filters, nand_filters);
         let servers_listings = query_singular(Region::Europe, Some(search_filters)).unwrap();
