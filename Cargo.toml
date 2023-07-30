@@ -4,7 +4,8 @@ members = [
     "subscriptions",
     "queries",
     "context",
-    "statistics"
+    "statistics",
+    "db"
 ]
 
 [workspace.package]
