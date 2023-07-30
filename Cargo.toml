@@ -5,7 +5,7 @@ members = [
     "queries",
     "context",
     "statistics",
-    "db"
+    "migration"
 ]
 
 [workspace.package]

@@ -9,8 +9,8 @@ pub struct Query;
 #[graphql_object(context = DatabaseContext)]
 impl Query {
     pub async fn statistics(&self, context: &DatabaseContext) -> Statistics {
-        context.add_statistics_query_visit().await;
-
-        Statistics::from_db(&context.get_statistics().await)
+        Statistics {
+            master_queries: context.get_queries_made().await as i32
+        }
     }
 }
