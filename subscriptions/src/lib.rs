@@ -20,7 +20,8 @@ type ServersStream = Pin<Box<dyn Stream<Item = Result<Server, FieldError>> + Sen
 
 const GATHER_SETTINGS: GatheringSettings = GatheringSettings {
     players: true,
-    rules: false
+    rules: false,
+    check_app_id: true
 };
 
 const DEFAULT_LIMIT_AMOUNT: i32 = 48;
