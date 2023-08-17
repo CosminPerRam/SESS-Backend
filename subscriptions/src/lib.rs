@@ -21,7 +21,6 @@ type ServersStream = Pin<Box<dyn Stream<Item = Result<Server, FieldError>> + Sen
 const GATHER_SETTINGS: GatheringSettings = GatheringSettings {
     players: true,
     rules: false,
-    check_app_id: true
 };
 
 const DEFAULT_LIMIT_AMOUNT: i32 = 48;
@@ -65,9 +64,12 @@ impl Subscription {
 
                 let server_response = query(&SocketAddr::new(ip, port), Engine::Source(None), Some(GATHER_SETTINGS), None);
 
-                if let Ok(response) = server_response {
-                    collected += 1;
-                    yield Ok(Server::from_valve_response(response))
+                match server_response {
+                    Err(e) => println!("Server query error: {e}"),
+                    Ok(response) => {
+                        collected += 1;
+                        yield Ok(Server::from_valve_response(response))
+                    }
                 }
             }
 

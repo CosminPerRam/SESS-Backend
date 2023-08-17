@@ -44,11 +44,11 @@ pub struct Server {
 impl Server {
     pub fn from_valve_response(response: Response) -> Self {
         Self {
-            protocol: response.info.protocol_version as i32,
+            protocol: response.info.protocol as i32,
             name: response.info.name,
             map: response.info.map,
             folder: response.info.folder,
-            game: response.info.game_mode,
+            game: response.info.game,
             appid: response.info.appid as i32,
             players_online: response.info.players_online as i32,
             players_maximum: response.info.players_maximum as i32,
@@ -56,7 +56,7 @@ impl Server {
             server_type: ServerKind::from_valve_response(response.info.server_type),
             has_password: response.info.has_password,
             vac_secured: response.info.vac_secured,
-            version: response.info.game_version,
+            version: response.info.version,
             players: response.players.unwrap_or_default()
                 .into_iter()
                 .map(Player::from_valve_response)
