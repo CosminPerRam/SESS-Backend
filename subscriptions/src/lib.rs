@@ -2,7 +2,7 @@ mod filters;
 mod server;
 mod player;
 
-use std::net::SocketAddr;
+use std::net::{IpAddr, SocketAddr};
 use std::pin::Pin;
 use juniper::{graphql_subscription, FieldError};
 use futures::Stream;
@@ -12,7 +12,7 @@ use gamedig::valve_master_server::{query_singular, Region};
 use gamedig::protocols::valve::{Engine, query, GatheringSettings};
 
 use crate::filters::{ServersFilters, to_gamedig_filters};
-use crate::server::Server;
+use crate::server::{Server, ServerInput};
 
 pub struct Subscription;
 
@@ -75,6 +75,24 @@ impl Subscription {
 
             //context.add_processed_servers(collected as u32).await;
             //fucking problem
+        };
+
+        Box::pin(stream)
+    }
+
+    async fn confirm(&self, context: &DatabaseContext, servers: Vec<ServerInput>) -> ServersStream {
+        let stream = stream! {
+            for server in servers {
+                let ip = server.ip.parse().unwrap(); // TODO: Remove this shit
+                let port = server.port as u16;
+
+                let server_response = query(&SocketAddr::new(ip, port), Engine::Source(None), Some(GATHER_SETTINGS), None);
+
+                match server_response {
+                    Err(e) => println!("Server query error: {e}"),
+                    Ok(response) => yield Ok(Server::from_valve_response(response))
+                }
+            }
         };
 
         Box::pin(stream)

@@ -1,6 +1,12 @@
 use gamedig::protocols::valve::{Response, Server as ValveServerKind};
-use juniper::{GraphQLEnum, GraphQLObject};
+use juniper::{GraphQLEnum, GraphQLInputObject, GraphQLObject};
 use crate::player::Player;
+
+#[derive(GraphQLInputObject, Debug)]
+pub struct ServerInput {
+    pub ip: String,
+    pub port: i32,
+}
 
 #[derive(GraphQLEnum)]
 pub enum ServerKind {
