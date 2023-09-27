@@ -1,8 +1,5 @@
-mod filters;
-mod server;
-mod player;
 
-use std::net::{IpAddr, SocketAddr};
+use std::net::SocketAddr;
 use std::pin::Pin;
 use juniper::{graphql_subscription, FieldError};
 use futures::Stream;
@@ -11,8 +8,8 @@ use context::DatabaseContext;
 use gamedig::valve_master_server::{query_singular, Region};
 use gamedig::protocols::valve::{Engine, query, GatheringSettings};
 
-use crate::filters::{ServersFilters, to_gamedig_filters};
-use crate::server::{Server, ServerInput};
+use gqls::filters::{ServersFilters, to_gamedig_filters};
+use gqls::server::{Server, ServerInput};
 
 pub struct Subscription;
 

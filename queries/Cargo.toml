@@ -6,5 +6,7 @@ edition = "2021"
 [dependencies]
 context = { path = "../context" }
 statistics = { path = "../statistics" }
+gqls = { path = "../gqls" }
 
 juniper = "0.15.11"
+gamedig = { version = "0.2.3" }
