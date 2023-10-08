@@ -10,6 +10,7 @@ pub struct Query;
 const GATHER_SETTINGS: GatheringSettings = GatheringSettings {
     players: true,
     rules: false,
+    check_app_id: true,
 };
 
 #[graphql_object(context = DatabaseContext)]

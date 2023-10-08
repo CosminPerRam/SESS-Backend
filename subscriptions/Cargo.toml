@@ -11,4 +11,4 @@ juniper = "0.15.11"
 async-stream = "0.3.5"
 futures = "0.3.28"
 tokio = { version = "1.28.0", features = ["macros", "rt-multi-thread"]}
-gamedig = { version = "0.2.3" }
+gamedig = { version = "0.4.0" }

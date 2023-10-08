@@ -8,4 +8,4 @@ context = { path = "../context" }
 gqls = { path = "../gqls" }
 
 juniper = "0.15.11"
-gamedig = { version = "0.2.3" }
+gamedig = { version = "0.4.0" }

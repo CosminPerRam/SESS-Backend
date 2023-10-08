@@ -13,11 +13,12 @@ use gqls::server::{Server, ServerInput};
 
 pub struct Subscription;
 
-type ServersStream = Pin<Box<dyn Stream<Item = Result<Server, FieldError>> + Send>>;
+type ServersStream = Pin<Box<dyn Stream<Item = Result<Server, FieldError>> + Send + Sync>>;
 
 const GATHER_SETTINGS: GatheringSettings = GatheringSettings {
     players: true,
     rules: false,
+    check_app_id: true,
 };
 
 const DEFAULT_LIMIT_AMOUNT: i32 = 48;
