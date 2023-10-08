@@ -1,10 +1,8 @@
-mod statistics;
 
 use std::net::SocketAddr;
 use gamedig::protocols::valve::{Engine, query, GatheringSettings};
 use juniper::graphql_object;
 use context::DatabaseContext;
-use crate::statistics::Statistics;
 use gqls::server::{Server, ServerInput};
 
 pub struct Query;
@@ -16,12 +14,6 @@ const GATHER_SETTINGS: GatheringSettings = GatheringSettings {
 
 #[graphql_object(context = DatabaseContext)]
 impl Query {
-    pub async fn statistics(&self, context: &DatabaseContext) -> Statistics {
-        context.add_statistics_query_visit().await;
-
-        Statistics::from_db(&context.get_statistics().await)
-    }
-
     pub async fn check(&self, _context: &DatabaseContext, server: ServerInput) -> Server {
         let ip = server.ip.parse().unwrap(); // TODO: Remove this shit
         let port = server.port as u16;
