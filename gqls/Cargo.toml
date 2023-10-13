@@ -4,10 +4,8 @@ version = "0.1.0"
 edition = "2021"
 rust-version.workspace = true
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-gamedig = { version = "0.2.3" }
+gamedig = { version = "0.4.1" }
 context = { path = "../context" }
 
 juniper = "0.15.11"
