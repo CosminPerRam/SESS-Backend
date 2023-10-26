@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use std::time::Duration;
 use juniper_graphql_ws::ConnectionConfig;
 use juniper_warp::subscriptions::serve_graphql_ws;
 use warp::{Filter, Rejection, Reply};
@@ -13,7 +14,10 @@ pub fn serve_schema(root_node: Arc<Schema>) -> impl Fn(Ws) -> Box<dyn Reply> + C
     move |ws: Ws| {
         let root_node = root_node.clone();
         Box::new(ws.on_upgrade(move |websocket| async move {
-            serve_graphql_ws(websocket, root_node, ConnectionConfig::new(get_context()))
+            let config = ConnectionConfig::new(get_context());
+            let config = config.with_keep_alive_interval(Duration::from_secs(2));
+
+            serve_graphql_ws(websocket, root_node, config)
                 .map(|r| {
                     if let Err(e) = r {
                         println!("Websocket error: {e}");
