@@ -6,7 +6,7 @@ use futures::Stream;
 use async_stream::stream;
 use context::DatabaseContext;
 use gamedig::valve_master_server::{query_singular, Region};
-use gamedig::protocols::valve::{Engine, query, GatheringSettings, SteamApp};
+use gamedig::protocols::valve::{Engine, query, GatheringSettings};
 
 use gqls::filters::{ServersFilters, to_gamedig_filters};
 use gqls::server::{Server, ServerInput};

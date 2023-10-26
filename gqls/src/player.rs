@@ -12,7 +12,7 @@ impl Player {
     pub fn from_valve_response(player: ServerPlayer) -> Self {
         Self {
             name: player.name,
-            score: player.score as i32,
+            score: player.score,
             duration: player.duration as f64
         }
     }
