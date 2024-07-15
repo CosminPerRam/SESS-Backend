@@ -1,9 +1,7 @@
 use std::env;
 use warp::Filter;
 use warp::http::Method;
-use crate::start_warp::graphiql::graphiql;
 use crate::start_warp::graphql::graphql;
-use crate::start_warp::homepage::homepage;
 use crate::start_warp::playground::playground;
 use crate::start_warp::subscriptions::subscriptions;
 
@@ -15,9 +13,7 @@ pub async fn start_warp() {
 
     let routes = subscriptions()
         .or(graphql())
-        .or(homepage())
         .or(playground())
-        .or(graphiql())
         .with(cors);
 
     let server_port: u16 = env::var("PORT")

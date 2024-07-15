@@ -5,7 +5,7 @@ edition = "2021"
 rust-version.workspace = true
 
 [dependencies]
-gamedig = { version = "0.4.1" }
+gamedig = { version = "0.5.1" }
 context = { path = "../context" }
 
-juniper = "0.15.11"
+juniper = "0.16.1"

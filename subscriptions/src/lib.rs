@@ -1,23 +1,23 @@
 
-use std::net::SocketAddr;
+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::pin::Pin;
 use juniper::{graphql_subscription, FieldError};
 use futures::Stream;
 use async_stream::stream;
+use gamedig::protocols::types::GatherToggle;
 use context::DatabaseContext;
-use gamedig::valve_master_server::{query_singular, Region};
+use gamedig::valve_master_server::{Region, ValveMasterServer};
 use gamedig::protocols::valve::{Engine, query, GatheringSettings};
-
 use gqls::filters::{ServersFilters, to_gamedig_filters};
 use gqls::server::{Server, ServerInput};
 
 pub struct Subscription;
 
-type ServersStream = Pin<Box<dyn Stream<Item = Result<Server, FieldError>> + Send + Sync>>;
+type ServersStream = Pin<Box<dyn Stream<Item = Result<Server, FieldError>> + Send>>;
 
 const GATHER_SETTINGS: GatheringSettings = GatheringSettings {
-    players: true,
-    rules: false,
+    players: GatherToggle::Enforce,
+    rules: GatherToggle::Skip,
     check_app_id: false,
 };
 
@@ -46,18 +46,19 @@ impl Subscription {
         let limit = get_limit_amount(limit);
         let mut collected = 0;
 
-        let search_filters = to_gamedig_filters(filters, nor_filters, nand_filters);
-        let servers_listings = query_singular(Region::Europe, Some(search_filters)).unwrap();
+        // TODO: DNS THIS
+        let mut master_server = ValveMasterServer::new(&SocketAddr::new(IpAddr::V4(Ipv4Addr::new(208, 64, 200, 65)), 27011)).unwrap();
 
-        let stream = stream! {
+        let search_filters = to_gamedig_filters(filters, nor_filters, nand_filters);
+        let servers_listings = master_server.query(Region::Europe, Some(search_filters)).unwrap();
+
+        Box::pin(stream! {
             for listing in servers_listings {
                 if collected == limit {
                     break;
                 }
 
-                let ip = listing.0;
-                let port = listing.1;
-
+                let (ip, port) = listing;
                 let server_response = query(&SocketAddr::new(ip, port), Engine::Source(None), Some(GATHER_SETTINGS), None);
 
                 match server_response {
@@ -68,12 +69,7 @@ impl Subscription {
                     }
                 }
             }
-
-            //context.add_processed_servers(collected as u32).await;
-            //fucking problem
-        };
-
-        Box::pin(stream)
+        })
     }
 
     async fn confirm(&self, context: &DatabaseContext, servers: Vec<ServerInput>) -> ServersStream {

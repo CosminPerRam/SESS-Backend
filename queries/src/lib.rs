@@ -1,5 +1,6 @@
 
 use std::net::SocketAddr;
+use gamedig::protocols::types::GatherToggle;
 use gamedig::protocols::valve::{Engine, query, GatheringSettings};
 use juniper::graphql_object;
 use context::DatabaseContext;
@@ -8,8 +9,8 @@ use gqls::server::{Server, ServerInput};
 pub struct Query;
 
 const GATHER_SETTINGS: GatheringSettings = GatheringSettings {
-    players: true,
-    rules: false,
+    players: GatherToggle::Enforce,
+    rules: GatherToggle::Skip,
     check_app_id: true,
 };
 

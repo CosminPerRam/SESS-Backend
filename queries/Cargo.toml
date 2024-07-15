@@ -7,5 +7,5 @@ edition = "2021"
 context = { path = "../context" }
 gqls = { path = "../gqls" }
 
-juniper = "0.15.11"
-gamedig = { version = "0.4.1" }
+juniper = "0.16.1"
+gamedig = { version = "0.5.1" }
