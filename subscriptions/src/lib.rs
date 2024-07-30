@@ -46,11 +46,16 @@ impl Subscription {
         let limit = get_limit_amount(limit);
         let mut collected = 0;
 
-        // TODO: DNS THIS
-        let mut master_server = ValveMasterServer::new(&SocketAddr::new(IpAddr::V4(Ipv4Addr::new(208, 64, 200, 65)), 27011)).unwrap();
-
         let search_filters = to_gamedig_filters(filters, nor_filters, nand_filters);
-        let servers_listings = master_server.query(Region::Europe, Some(search_filters)).unwrap();
+
+        // TODO: DNS THIS
+        let servers_listings = match ValveMasterServer::new(&SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 69, 99, 29)), 27011)) {
+            Ok(mut ms) => ms.query(Region::Europe, Some(search_filters)).inspect_err(|e| println!("Master server query error {e}")).unwrap_or_default(),
+            Err(e) => {
+                println!("Master server creation error: {e}");
+                Vec::new()
+            }
+        };
 
         Box::pin(stream! {
             for listing in servers_listings {
