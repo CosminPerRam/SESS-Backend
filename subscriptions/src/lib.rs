@@ -67,7 +67,7 @@ impl Subscription {
                 let server_response = query(&SocketAddr::new(ip, port), Engine::Source(None), Some(GATHER_SETTINGS), None);
 
                 match server_response {
-                    Err(e) => println!("Server query error: {e}"),
+                    Err(e) => println!("Server ({ip}:{port}) query error: {:?}", e.kind),
                     Ok(response) => {
                         collected += 1;
                         yield Ok(Server::from_valve_response(response))
