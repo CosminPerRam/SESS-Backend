@@ -74,6 +74,7 @@ impl Subscription {
                     }
                 }
             }
+            println!("Query ended");
         })
     }
 
