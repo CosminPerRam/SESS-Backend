@@ -38,7 +38,7 @@ const fn get_limit_amount(limit: Option<i32>) -> i32 {
 
 #[graphql_subscription(context = DatabaseContext)]
 impl Subscription {
-    async fn servers(&self, context: &DatabaseContext,
+    async fn servers(&self, _context: &DatabaseContext,
                          filters: Option<ServersFilters>,
                          nor_filters: Option<ServersFilters>,
                          nand_filters: Option<ServersFilters>,
@@ -72,7 +72,7 @@ impl Subscription {
         })
     }
 
-    async fn confirm(&self, context: &DatabaseContext, servers: Vec<ServerInput>) -> ServersStream {
+    async fn confirm(&self, _context: &DatabaseContext, servers: Vec<ServerInput>) -> ServersStream {
         let stream = stream! {
             for server in servers {
                 let ip = server.ip.parse().unwrap(); // TODO: Remove this shit

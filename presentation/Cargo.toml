@@ -10,13 +10,13 @@ context = { path = "../context" }
 queries = { path = "../queries" }
 subscriptions = { path = "../subscriptions" }
 
-env_logger = "0.11.3"
-futures = "0.3.28"
+env_logger = "0.11.5"
+futures = "0.3.30"
 juniper = "0.16.1"
 juniper_graphql_ws = { version = "0.4.0", features = ["graphql-transport-ws"]}
 juniper_warp = { version = "0.8.0", features = ["subscriptions"]}
 log = "0.4.22"
 serde = { version = "1.0.204", features = ["derive"]}
-serde_json = "1.0.120"
-tokio = { version = "1.38.0", features = ["macros", "rt-multi-thread"]}
+serde_json = "1.0.121"
+tokio = { version = "1.39.2", features = ["macros", "rt-multi-thread"]}
 warp = { version = "0.3.7", features = ["tls"]}
